@@ -1,11 +1,6 @@
 #ifndef ANALIZADOR_H
 #define ANALIZADOR_H
 
-
-class Analizador
-{
-public:
-    Analizador();
-};
+void Analisis(char* entrada);
 
 #endif // ANALIZADOR_H

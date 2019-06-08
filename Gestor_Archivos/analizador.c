@@ -1,6 +1,6 @@
 #include "analizador.h"
 
-Analizador::Analizador()
+void Analisis(char* entrada)
 {
 
 }
