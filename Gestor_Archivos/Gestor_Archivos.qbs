@@ -5,7 +5,14 @@ CppApplication {
     files: [
         "analizador.c",
         "analizador.h",
+        "estructuras.h",
+        "fdisk.c",
+        "fdisk.h",
         "main.c",
+        "mkdisk.c",
+        "mkdisk.h",
+        "mrdisk.c",
+        "mrdisk.h",
     ]
 
     Group {     // Properties for the produced executable

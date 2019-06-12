@@ -17,7 +17,6 @@ void Salir(void);
 
 int main()
 {
-    printf("Hello World!\n");
     LectorEntrada();
 
     return 0;
@@ -29,13 +28,14 @@ void LectorEntrada()
     char* entrada=malloc(200);
     char* cadena =NULL;
 
+
     while(salir==0)
     {
         printf("MIA-> ");
         fgets(entrada,200,stdin);
         if(strcasecmp(entrada,"\n")==0)
         {
-            printf("***INGRESE ALGUN COMANDO***\n");
+            printf("\nxxxxxxxxxx\nINGRESE ALGUN COMANDO\nxxxxxxxxxx\n");
         }else
         {
             cadena=LimpiarEntrada(entrada);
@@ -74,36 +74,29 @@ void LectorEntrada()
                 {
                     if(strcasecmp(ln_completa,"")!=0)
                     {
-                        strcat(ln_completa," ");
+                        //strcat(ln_completa," ");
                         strcat(ln_completa,cadena);
-                        //printf("Analizar: %s\n",ln_completa);
                         if(strcasestr(ln_completa,"EXEC")!=NULL)
                         {
-                            printf("comando exec: %s\n",ln_completa);
                             ComandoExec(ln_completa);
                         }else
                         {
-                            printf("analisis: %s\n",ln_completa);
-                            Analisis(ln_completa);
+                            Analisis(ln_completa, 0);
                         }
                         strcpy(ln_completa,"");
                     }else
                     {
                         if(strcasestr(cadena,"EXEC")!=NULL)
                         {
-                            printf("comando exec: %s\n",cadena);
                             ComandoExec(cadena);
                         }else
                         {
-                            printf("comando: %s\n", cadena);
-                            Analisis(cadena);
+                            Analisis(cadena, 0);
                         }
                     }
                 }
             }
         }
-        //free(cadena);
-        //free(entrada);
     }
 
 
@@ -111,24 +104,86 @@ void LectorEntrada()
 
 void ComandoExec(char *entrada)
 {
-    int cont=0;
+    char* cmd_completo=malloc(200);
     char *aux=strtok(entrada," ");
     aux=strtok(NULL," ");
     aux=strtok(aux,"~:");
 
-    while (aux!=NULL)
+    if(aux==NULL)
     {
-        cont++;
-        aux=strtok(NULL,"~:");
-    }
-
-    if(cont<=1)//lo hago para confirmar que la instruccion -path~:~"ruta" este completa
-    {
-        printf("ERROR! instruccion 'EXEC' incompleta\n");
+        printf("\nxxxxxxxxxx\nERROR NO CONTROLADO! instruccion 'EXEC' invalida\nxxxxxxxxxx\n");
     }else
     {
-       FILE *file;
+        if(strcasecmp(aux,"-path")==0)
+        {
+            aux=strtok(NULL,"~:");
+            printf("la ruta es: %s\n", aux);
+            FILE *file;
+            file=fopen(aux, "r");
 
+            if(file==NULL)
+            {
+                printf("\nxxxxxxxxxx\nArchivo no existe.\nxxxxxxxxxx\n");
+            }else
+            {
+                printf("leyendo archivo.....\n");
+                char linea[200];
+                int cont_linea=0;
+                char *lectura;
+                while(fgets(linea,200,file)!=NULL)
+                {
+                    cont_linea++;
+                    //Se enviara a analizar linea por linea
+                    lectura=LimpiarEntrada(linea);
+                    if(lectura!=NULL)
+                    {
+                        if(strstr(lectura,"#")!=NULL)
+                        {
+                            char *auxA=LeerComentario(lectura);
+                            if(auxA!=NULL)
+                            {
+                                strcpy(lectura,auxA);
+                            }else
+                            {
+                                continue;
+                            }
+                        }
+
+                        if(strstr(lectura,"\\")!=NULL)
+                        {
+                            if(strcasecmp(cmd_completo,"")==0)
+                            {
+                                strcpy(cmd_completo,UnirLinea(lectura));
+                            }else
+                            {
+                                strcat(cmd_completo," ");
+                                strcat(cmd_completo,UnirLinea(lectura));
+                            }
+
+                        }else
+                        {
+                            if(strcasecmp(cmd_completo,"")!=0)
+                            {
+                                //strcat(cmd_completo," ");
+                                strcat(cmd_completo,lectura);
+                                Analisis(cmd_completo, cont_linea);
+                                strcpy(cmd_completo,"");
+                            }else
+                            {
+                                Analisis(lectura,cont_linea);
+                            }
+                        }
+                    }else
+                    {
+                        continue;
+                    }
+                }
+            }
+
+        }else
+        {
+            printf("\nxxxxxxxxxx\nERROR! instruccion 'EXEC' incompleta\nxxxxxxxxxx\n");
+        }
     }
 }
 
@@ -147,18 +202,6 @@ char* LimpiarEntrada(char* entrada)
 {
     entrada=strtok(entrada,"\n");
     return (entrada);
-   /*
-    char *salto=strtok(entrada, "\n");
-    char *aux=malloc(200);
-    strcpy(aux,salto);
-    while(salto!=NULL)
-    {
-        salto=strtok(NULL,"\n");
-    }
-    free(salto);
-    return aux;
-    */
-
 }
 
 char* LeerComentario(char* entrada)
@@ -168,11 +211,20 @@ char* LeerComentario(char* entrada)
 
     if(linea[0]=='#')
     {
+        printf("%s\n", entrada);
         return (NULL);
     }else
     {
+        char *aux=malloc(200);
         entrada=strtok(entrada,"#");
-        return (entrada);
+        strcpy(aux,entrada);
+        entrada=strtok(NULL,"#");
+        if(entrada!=NULL)
+        {
+            printf("#%s\n",entrada);
+            printf("%s\n",aux);
+        }
+        return (aux);
     }
 }
 
@@ -181,5 +233,3 @@ char* UnirLinea(char* entrada)
     char *aux=strtok(entrada,"\\");
     return aux;
 }
-
-
