@@ -142,7 +142,7 @@ void CrearDisco(char* size, char* fit, char* unit, char* path, int linea)
             if(file!=NULL)
             {
                 fseek(file,0, SEEK_SET);
-                char buffer[1000];
+                char buffer[1000]={0};
                 for(int i=0; i<tam; i++)
                 {
                     fwrite(buffer, sizeof (buffer),1,file);

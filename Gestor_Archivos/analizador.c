@@ -2,6 +2,7 @@
 #include "mkdisk.h"
 #include "mrdisk.h"
 #include "fdisk.h"
+#include "reportes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
@@ -26,6 +27,8 @@ void Analisis(char* entrada, int linea)
         UNMOUNT(entrada,linea);
     else if(strcasecmp(comando,"PAUSE")==0)
         PAUSE();
+    else if(strcasecmp(comando,"REP")==0)
+        ProcesoRep(entrada,linea);
     else
         printf("\nxxxxxxxxxx\nERROR! Linea %d: comando invalido\nxxxxxxxxxx\n", linea);
 

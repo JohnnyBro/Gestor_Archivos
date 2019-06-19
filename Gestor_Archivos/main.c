@@ -49,6 +49,7 @@ void LectorEntrada()
             {
                 if(strstr(cadena,"#")!=NULL)
                 {
+
                     char *aux=LeerComentario(cadena);
                     if(aux!=NULL)
                     {

@@ -13,6 +13,8 @@ CppApplication {
         "mkdisk.h",
         "mrdisk.c",
         "mrdisk.h",
+        "reportes.c",
+        "reportes.h",
     ]
 
     Group {     // Properties for the produced executable
